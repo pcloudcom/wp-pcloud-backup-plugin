@@ -19,13 +19,9 @@ $freg = array (
 				'interval' => 604800,
 				'display' => 'Weekly' 
 		),
-		'fortnightly' => array (
-				'interval' => 1209600,
-				'display' => 'Fortnightly' 
-		),
 		'monthly' => array (
 				'interval' => 2419200,
-				'display' => 'Once Every 4 weeks' 
+				'display' => 'Montly' 
 		) 
 );
 $sch_data = wp2pcloud_getSchData();

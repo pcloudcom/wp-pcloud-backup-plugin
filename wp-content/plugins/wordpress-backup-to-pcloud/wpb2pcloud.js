@@ -30,7 +30,7 @@ jQuery(function($){
 		},'JSON');
 	});
 	makeBackupNow = function(el){
-		el.text("Backup is started").attr('disabled',true).attr('onclick','return false');
+		el.text("Backup is started").attr('disabled',true).addClass('disabled').attr('id','_setDisabled_btn').attr('onclick','return false');
 		$.post(ajax_url+'&method=start_backup',{},function(data){
 			$.get('admin.php');
 		},'JSON');
@@ -80,10 +80,16 @@ jQuery(function($){
 					html = html +'<li><a target="blank_" href="https://my.pcloud.com/#folder='+data.metadata.folderid+'&page=filemanager&authtoken='+php_data.pcloud_auth+'"><img src="https://my.pcloud.com/img/icons/20/archive.png" alt="" /> '+el.name+' </a></li>';
 				});
 				html = html + '</ul>';
+				
+				if(div.html() != html) {
+					if($('#_setDisabled_btn').length != 0) {
+						$('#_setDisabled_btn').attr('onclick','makeBackupNow(jQuery(this));return false').attr('disabled',false).removeClass('disabled').text('Backup now');
+					}
+				}
 				div.html(html);
 			}
 		});
-		setTimeout(getBackupsFromPcloud, 10000);
+		setTimeout(getBackupsFromPcloud, 30000);
 	};
 	
 	getBackupsFromPcloud();
