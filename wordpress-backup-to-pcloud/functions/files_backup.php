@@ -40,7 +40,8 @@ class wp2pcloudFilesBackup {
 		$zip->open ( $this->write_filename, ZIPARCHIVE::CREATE );
 		$zip->setArchiveComment ( "Wordpress2pClod" );
 		foreach ( $files as $el ) {
-			$zip->addFile ( $el );
+			$lname = str_replace(ABSPATH, "", $el);
+			$zip->addFile ( $el,$lname);
 		}
 		if ($this->sql_backup_file != false) {
 			$zip->addFile ( $this->sql_backup_file, 'backup.sql' );
