@@ -5,7 +5,7 @@ class wp2pcloudFilesRestore {
 	
 	public function __construct() {
 		$this->restore_path = ABSPATH;
-		$this->restore_path = '/tmp/test/';
+// 		$this->restore_path = '/tmp/test/';
 		$this->write_filename = tempnam ( sys_get_temp_dir (), 'restore_archive' );
 		error_reporting(-1);
 	}
