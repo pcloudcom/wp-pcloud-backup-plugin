@@ -46,6 +46,15 @@ function wp2pcloud_ajax_process_request() {
 		$r->getFile();
 		die();
 		
+	}else if($m == 'check_can_restore') {
+		if(!is_writable(ABSPATH)) {
+			$result['status'] = "1";
+			$result['msg'] = __("<p>Path ".ABSPATH." is not writable!</p>");
+		}
+		if(!is_writable(sys_get_temp_dir ())) {
+			$result['status'] = "1";
+			$result['msg'] = __("<p>Path ".sys_get_temp_dir ()." is not writable!</p>");
+		}
 	}
 	echo json_encode ( $result );
 	die ();

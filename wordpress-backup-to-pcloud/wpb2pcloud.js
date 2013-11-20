@@ -35,8 +35,14 @@ jQuery(function($){
 		if(confirm("Are you sure?")) {
 			$('#wp2pcloud_restoring').show();
 			$('#wp2pcloud_settings').hide();
-			$.post(ajax_url+'&method=restore_archive',{'file_id':id},function(data){
-				window.location = window.location+"&msg=restore_ok";
+			$.getJSON(ajax_url+"&method=check_can_restore",function(data){
+				if(data.status == "0") {
+					$.post(ajax_url+'&method=restore_archive',{'file_id':id},function(data){
+						window.location = window.location+"&msg=restore_ok";
+					});		
+				}else { // show error
+					$('#message').html(data.msg);
+				}
 			});
 		}
 	};
