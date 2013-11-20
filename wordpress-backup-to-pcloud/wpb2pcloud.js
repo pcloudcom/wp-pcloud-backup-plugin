@@ -1,6 +1,7 @@
 var unlink_account;
 var getBackupsFromPcloud;
 var makeBackupNow;
+var restore_file;
 
 jQuery(function($){
 
@@ -29,6 +30,17 @@ jQuery(function($){
 			$.get('admin.php');
 		},'JSON');
 	});
+	
+	restore_file = function(id) {
+		if(confirm("Are you sure?")) {
+			$('#wp2pcloud_restoring').show();
+			$('#wp2pcloud_settings').hide();
+			$.post(ajax_url+'&method=restore_archive',{'file_id':id},function(data){
+				window.location = window.location+"&msg=restore_ok";
+			});
+		}
+	};
+	
 	makeBackupNow = function(el){
 		el.text("Backup is started").attr('disabled',true).addClass('disabled').attr('id','_setDisabled_btn').attr('onclick','return false');
 		$.post(ajax_url+'&method=start_backup',{},function(data){
@@ -64,22 +76,26 @@ jQuery(function($){
 	getBackupsFromPcloud = function(){
 		if( $('#pcloudListBackups').length == 0 ) { return false; }
 		div = $('#pcloudListBackups');
-//		div.html('Loading your backups data');
 		$.getJSON(api_url+"listfolder?path=/"+php_data.PCLOUD_BACKUP_DIR+"&auth="+php_data.pcloud_auth,function(data){
 			if(data.result != "0") {
 				if(data.result == "2005") {
-					$.getJSON(api_url+"createfolder",{'auth':php_data.pcloud_auth,'path':'/'+php_data.PCLOUD_BACKUP_DIR,'name':php_data.PCLOUD_BACKUP_DIR},function(data){
-						getBackupsFromPcloud();
-					});
+					folders = php_data.PCLOUD_BACKUP_DIR.split("/");
+					if(folders.length == 2) {
+						$.getJSON(api_url+"createfolder",{'auth':php_data.pcloud_auth,'path':'/'+folders[0],'name':folders[0]},function(data){
+							$.getJSON(api_url+"createfolder",{'auth':php_data.pcloud_auth,'path':'/'+folders[0]+"/"+folders[1],'name':folders[1]},function(data){
+								getBackupsFromPcloud();
+							});
+						});
+					}
 				}
-			}else {
+			} else {
 				html = "";
-				html = html + '<ul>';
+				html = html + '<table> <tbody> ';
 				$.each(data.metadata.contents,function(k,el){
 					if( el.contenttype != "application/zip" ) { return true; }
-					html = html +'<li><a target="blank_" href="https://my.pcloud.com/#folder='+data.metadata.folderid+'&page=filemanager&authtoken='+php_data.pcloud_auth+'"><img src="https://my.pcloud.com/img/icons/20/archive.png" alt="" /> '+el.name+' </a></li>';
+					html = html +'<tr> <td> <a target="blank_" href="https://my.pcloud.com/#folder='+data.metadata.folderid+'&page=filemanager&authtoken='+php_data.pcloud_auth+'"><img src="https://my.pcloud.com/img/icons/20/archive.png" alt="" /> '+el.name+' </a></td> <td><a file_id="'+el.fileid+'" onclick="restore_file('+el.fileid+');return false;" href="#" class="button">Restore</a></td> </tr> ';
 				});
-				html = html + '</ul>';
+				html = html + '</tbody> </table>';
 				
 				if(div.html() != html) {
 					if($('#_setDisabled_btn').length != 0) {

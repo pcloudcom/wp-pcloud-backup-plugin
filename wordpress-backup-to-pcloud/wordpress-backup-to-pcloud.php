@@ -9,12 +9,14 @@
  */
 define ( 'BACKUP_TO_PCLOUD_VERSION', '0.1' );
 define ( "PCLOUD_DIR", 'wordpress-backup-to-pcloud' );
-define ( 'PCLOUD_BACKUP_DIR', 'WORDPRESS_BACKUPS' );
+define ( 'PCLOUD_BACKUP_DIR', 'WORDPRESS_BACKUPS/'.get_bloginfo("name") );
+
 
 require_once (ABSPATH . 'wp-admin/includes/upgrade.php');
 require_once (ABSPATH . 'wp-content/plugins/' . PCLOUD_DIR . '/functions/conf.php');
 require_once (ABSPATH . 'wp-content/plugins/' . PCLOUD_DIR . '/functions/database_backup.php');
 require_once (ABSPATH . 'wp-content/plugins/' . PCLOUD_DIR . '/functions/files_backup.php');
+require_once (ABSPATH . 'wp-content/plugins/' . PCLOUD_DIR . '/functions/files_restore.php');
 function backup_to_pcloud_admin_menu() {
 	$imgUrl = rtrim ( WP_PLUGIN_URL, '/' ) . '/' . PCLOUD_DIR . '/images/logo_16.png';
 	add_menu_page ( 'B2pCloud', 'pCloud Backup', 'administrator', 'b2pcloud_settings', 'b2pcloud_display_settings', $imgUrl );
@@ -37,6 +39,13 @@ function wp2pcloud_ajax_process_request() {
 	} else if ($m == "set_schedule") {
 		wp2pcloud_setSchData($_POST);
 		set_schedule($_POST['day'],$_POST['hour'],$_POST['freq']);
+	}else if($m == "restore_archive") {
+		$r = new wp2pcloudFilesRestore();
+		$r->setAuth( wp2pcloud_getAuth() );
+		$r->setFileId($_POST['file_id']);
+		$r->getFile();
+		die();
+		
 	}
 	echo json_encode ( $result );
 	die ();
@@ -49,7 +58,8 @@ function wp2pcloud_perform_backup() {
 	$f->setArchiveName ( 'wp2-pcloud_backup_' . get_bloginfo ( 'name' ) . '_' . get_bloginfo ( "wpurl" ) . '_' . time () . '_' . date ( 'Y-m-d' ) . '.zip' );
 	$f->start ();
 }
-function b2pcloud_display_settings() {
+function b2pcloud_display_settings() { 
+	
 	wp_enqueue_script ( 'wpb2pcloud', WP_PLUGIN_URL . '/' . PCLOUD_DIR . '/wpb2pcloud.js' );
 	$data = array (
 			'pcloud_auth' => wp2pcloud_getAuth (),
@@ -84,6 +94,10 @@ function wp2pcloud_uninstall() {
 	$sql = "DROP TABLE `" . $wpdb->prefix . "wp2pcloud_config`";
 	$wpdb->query ( $sql );
 	wp_clear_scheduled_hook( 'run_pcloud_backup_hook' );
+}
+
+function download_backup(){
+	echo "da";
 }
 
 function set_schedule($day, $time, $frequency) {

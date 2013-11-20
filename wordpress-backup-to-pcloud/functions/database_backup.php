@@ -29,10 +29,10 @@ class wp2pcloudDatabaseBackup {
 	
 	private function start_sql_backup() {
 		$blog_time = strtotime(current_time('mysql'));
-		$this->write("-- WordPress2Pcloud SQL Dump\n");
-		$this->write("-- Version " . BACKUP_TO_PCLOUD_VERSION . "\n");
-		$this->write("-- http://pcloud.com\n");
-		$this->write("-- Generation Time: " . date("F j, Y", $blog_time) . " at " . date("H:i", $blog_time) . "\n\n");
+// 		$this->write("-- WordPress2Pcloud SQL Dump\n");
+// 		$this->write("-- Version " . BACKUP_TO_PCLOUD_VERSION . "\n");
+// 		$this->write("-- http://pcloud.com\n");
+// 		$this->write("-- Generation Time: " . date("F j, Y", $blog_time) . " at " . date("H:i", $blog_time) . "\n\n");
 		
 		$this->write("/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;\n");
 		$this->write("/*!40101 SET NAMES utf8 */;\n");
@@ -61,16 +61,16 @@ class wp2pcloudDatabaseBackup {
 		$row_count = 0;
 		$broy = $this->db->get_var("SELECT COUNT(*) FROM $table");	// yeah it's bad but ...
 		if ($broy == 0) {
-			$this->write("--\n-- Skiping table `$table` because is empty\n--\n\n");
+// 			$this->write("--\n-- Skiping table `$table` because is empty\n--\n\n");
 		} else {
 			if ($offset == 0) {
-				$this->write("--\n-- Data for table `$table`\n--\n\n");
+// 				$this->write("--\n-- Data for table `$table`\n--\n\n");
 			}
 			for ($i = $offset; $i < $broy; $i = $i + $this->max_data_limit) {
 				$sql = "SELECT * FROM $table LIMIT " . $this->max_data_limit . " OFFSET ".$i;
 				$table_data = $this->db->get_results($sql,ARRAY_A);
 				foreach ($table_data as $k => $v) {
-					$this->write( self::mysql_insert_array($table,$v). "\n" );										
+					$this->write( self::mysql_insert_array($table,$v). ";\n" );										
 				}
 			}
 		}

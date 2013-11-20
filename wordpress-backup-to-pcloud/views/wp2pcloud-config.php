@@ -31,7 +31,24 @@ $sch_data = wp2pcloud_getSchData();
 	<p class="description"><?php printf( 'Version %s', BACKUP_TO_PCLOUD_VERSION) ?></p>
 </div>
 
+<?php if(isset($_GET['msg']) && $_GET['msg'] == 'restore_ok') {?>
+<div id="message" class="updated below-h2"><p><?php echo __('Your files and database has been restored successfull')?> </p></div>
+<?php } ?>
 
+<div id="wp2pcloud_restoring" style="display: none;">
+	<h3><?php echo __('Restoring from archive','wp2pcloud');?></h3>
+	
+	<div style="text-align: center;">
+		<div id="message" class="updated below-h2"><p><?php echo __('Please wait, your backup is downloading')?> <img src="<?php echo  rtrim ( WP_PLUGIN_URL, '/' ) . '/' . PCLOUD_DIR . '/images/preload.gif'?>" alt="" /> <br /><br /></p></div>
+		
+		<div style="text-align: left;margin-top:10px;">
+			<?php echo __("When your backup is restored, this page will reload!",'wp2pcloud')?>
+		</div>
+	</div>
+	
+</div>
+
+<div id="wp2pcloud_settings">
 <?php  if($auth == false) {	 ?>
 <form action="" id="link_pcloud_form">
 	<table>
@@ -104,3 +121,4 @@ $sch_data = wp2pcloud_getSchData();
 </div>
 
 <?php } ?>
+</div>

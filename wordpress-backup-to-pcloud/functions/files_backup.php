@@ -52,11 +52,11 @@ class wp2pcloudFilesBackup {
 			unlink ( $this->sql_backup_file );
 		}
 	}
-	private function makeDirectory() {
+	private function makeDirectory($dir_name = "/WORDPRESS_BACKUPS") {
 		$ch = curl_init ();
 		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt ( $ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible;)" );
-		curl_setopt ( $ch, CURLOPT_URL, 'http://api.pcloud.com/createfolder?path=/WORDPRESS_BACKUPS&name=WORDPRESS_BACKUPS&auth=' . wp2pcloud_getAuth () );
+		curl_setopt ( $ch, CURLOPT_URL, 'http://api.pcloud.com/createfolder?path='.$dir_name.'&name='.trim($dir_name,'/').'&auth=' . wp2pcloud_getAuth () );
 		$response = curl_exec ( $ch );
 		$response = @json_decode ( $response );
 		curl_close ( $ch );
@@ -66,13 +66,15 @@ class wp2pcloudFilesBackup {
 		$ch = curl_init ();
 		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt ( $ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible;)" );
-		curl_setopt ( $ch, CURLOPT_URL, 'http://api.pcloud.com/listfolder?path=/WORDPRESS_BACKUPS&auth=' . wp2pcloud_getAuth () );
+		curl_setopt ( $ch, CURLOPT_URL, 'http://api.pcloud.com/listfolder?path=/'.PCLOUD_BACKUP_DIR.'&auth=' . wp2pcloud_getAuth () );
 		$response = curl_exec ( $ch );
 		$response = @json_decode ( $response );
 		curl_close ( $ch );
 		$folder_id = false;
 		if ($response->result == 2005) {
-			$res = self::makeDirectory ();
+				$folders = explode("/", PCLOUD_BACKUP_DIR);
+				self::makeDirectory ("/".$folders[0]);
+				$res = self::makeDirectory ("/".$folders[0]."/".$folders[1]);
 			$folder_id = $res->metadata->folderid;
 		} else {
 			$folder_id = $response->metadata->folderid;
