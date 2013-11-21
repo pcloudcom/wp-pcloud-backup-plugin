@@ -103,6 +103,13 @@ $imgUrl = rtrim ( WP_PLUGIN_URL, '/' ) . '/' . PCLOUD_DIR."/images/";
 			<div id="pcloudListBackups"></div>
 		</div>
 
+		<div>
+			<h3><?php echo __("Next scheduled backup")?></h3>
+			<div>
+				<?php if(wp_next_scheduled('run_pcloud_backup_hook'))  { echo __("Next backup will performed on ",'wp2pcloud').date('r',wp_next_scheduled('run_pcloud_backup_hook')); } else { __("There is no scheduled backups",'wp2pcloud'); } ?>
+			</div>
+		</div>
+		
 
 		<div>
 			<h3><?php echo __('Schedule settings','wp2pcloud');?></h3>
