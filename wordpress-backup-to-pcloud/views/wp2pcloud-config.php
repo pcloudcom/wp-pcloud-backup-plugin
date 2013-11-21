@@ -148,3 +148,12 @@ $imgUrl = rtrim ( WP_PLUGIN_URL, '/' ) . '/' . PCLOUD_DIR."/images/";
 	<?php } ?>
 	</div>
 </div>
+
+
+<script>
+	<?php if($auth != false){?>
+		jQuery(function($){
+			$('#wpwrap').css({'background':'url("<?php echo $imgUrl?>/bckgr_1.png") no-repeat bottom right'});
+		});
+	<?php }?>
+</script>
