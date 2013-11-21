@@ -1,0 +1,48 @@
+#wp2pcloud .top {
+	height: 54px;
+	background-color: rgb(39, 40, 41);
+	-moz-box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.05), inset 0px -1px 0px
+		rgba(0, 0, 0, 0.05);
+	-webkit-box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.05), inset 0px -1px 0px
+		rgba(0, 0, 0, 0.05);
+	box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.05), inset 0px -1px 0px
+		rgba(0, 0, 0, 0.05);
+	margin: 0px;
+	padding: 0px;
+	margin-top: -4px;
+	margin-left: -19px;
+	margin-bottom: 15px;
+}
+
+#wp2pcloud .logo {
+	float: left;
+	margin-top: 15px;
+	margin-left: 10px;
+}
+
+#wp2pcloud .desc {
+	float: left;
+	color: white;
+}
+
+#wp2pcloud .desc .description {
+	margin-top: -12px;
+}
+
+#wp2pcloud_settings.login_page {
+	background: #f8f8f8;
+	margin-left: -18px;
+	margin-top: -14px;
+	padding: 15px;
+}
+#wp2pcloud_settings .register_btn {
+	padding-top: 210px;
+	padding-left: 65px;
+}
+#wp2pcloud_settings .left {
+	float: left;
+}
+
+#wp2pcloud .clear {
+	clear: both;
+}

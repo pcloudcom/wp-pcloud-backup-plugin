@@ -5,7 +5,12 @@
  * Description: _________ Version: 0.1 
  * Author: Yuksel Saliev Author 
  * URI: http://pcloud.com 
- * License: Copyright 2013 - pCloud This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2, as published by the Free Software Foundation. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+ * License: Copyright 2013 - pCloud 
+ * 	This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2, as published by the Free Software Foundation.
+	This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+	See the GNU General Public License for more details. 
+	You should have received a copy of the GNU General Public License along with this program; if not, write to the 
+	Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 define ( 'BACKUP_TO_PCLOUD_VERSION', '0.1' );
 define ( "PCLOUD_DIR", 'wordpress-backup-to-pcloud' );
@@ -68,8 +73,8 @@ function wp2pcloud_perform_backup() {
 	$f->start ();
 }
 function b2pcloud_display_settings() { 
-	
 	wp_enqueue_script ( 'wpb2pcloud', WP_PLUGIN_URL . '/' . PCLOUD_DIR . '/wpb2pcloud.js' );
+	wp_enqueue_style('wpb2pcloud',WP_PLUGIN_URL . '/' . PCLOUD_DIR . '/wpb2pcloud.css' );
 	$data = array (
 			'pcloud_auth' => wp2pcloud_getAuth (),
 			'blog_name' => get_bloginfo ( 'name' ),
@@ -103,10 +108,6 @@ function wp2pcloud_uninstall() {
 	$sql = "DROP TABLE `" . $wpdb->prefix . "wp2pcloud_config`";
 	$wpdb->query ( $sql );
 	wp_clear_scheduled_hook( 'run_pcloud_backup_hook' );
-}
-
-function download_backup(){
-	echo "da";
 }
 
 function set_schedule($day, $time, $frequency) {
