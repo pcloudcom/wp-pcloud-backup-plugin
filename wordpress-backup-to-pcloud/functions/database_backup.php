@@ -61,6 +61,8 @@ class wp2pcloudDatabaseBackup {
 	
 	
 	private function backUpTable($table,$offset = 0){
+		$this->db->query("BEGIN TRANSACTION");
+		$this->db->query("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
 		$row_count = 0;
 		$broy = $this->db->get_var("SELECT COUNT(*) FROM $table");	// yeah it's bad but ...
 		if ($broy == 0) {
@@ -74,6 +76,8 @@ class wp2pcloudDatabaseBackup {
 				}
 			}
 		}
+		
+		$this->db->query("COMMIT");
 	}
 	
 	private function mysql_insert_array($table, $data,$delayed = false,$ignore = false) {
