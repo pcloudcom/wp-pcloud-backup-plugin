@@ -3,7 +3,7 @@
  * Plugin Name: WordPress Backup to Pcloud 
  * Plugin URI: http://pcloud.com 
  * Description: _________ Version: 0.1 
- * Author: Yuksel Saliev Author 
+ * Author: Yuksel Saliev - yuks 
  * URI: http://pcloud.com 
  * License: Copyright 2013 - pCloud 
  * 	This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2, as published by the Free Software Foundation.
@@ -17,13 +17,14 @@ define ( "PCLOUD_DIR", 'wordpress-backup-to-pcloud' );
 define ( 'PCLOUD_BACKUP_DIR', 'WORDPRESS_BACKUPS/'.get_bloginfo("name") );
 
 
-require_once (ABSPATH . 'wp-admin/includes/upgrade.php');
-require_once (ABSPATH . 'wp-content/plugins/' . PCLOUD_DIR . '/functions/conf.php');
-require_once (ABSPATH . 'wp-content/plugins/' . PCLOUD_DIR . '/functions/database_backup.php');
-require_once (ABSPATH . 'wp-content/plugins/' . PCLOUD_DIR . '/functions/files_backup.php');
-require_once (ABSPATH . 'wp-content/plugins/' . PCLOUD_DIR . '/functions/files_restore.php');
+require_once (dirname(dirname(dirname(dirname(__FILE__)))) . '/wp-admin/includes/upgrade.php');
+require_once (plugin_dir_path(__FILE__). '/functions/conf.php');
+require_once (plugin_dir_path(__FILE__). '/functions/database_backup.php');
+require_once (plugin_dir_path(__FILE__). '/functions/files_backup.php');
+require_once (plugin_dir_path(__FILE__). '/functions/files_restore.php');
+
 function backup_to_pcloud_admin_menu() {
-	$imgUrl = rtrim ( WP_PLUGIN_URL, '/' ) . '/' . PCLOUD_DIR . '/images/logo_16.png';
+	$imgUrl = rtrim(plugins_url( '/images/logo_16.png', __FILE__ ));
 	add_menu_page ( 'B2pCloud', 'pCloud Backup', 'administrator', 'b2pcloud_settings', 'b2pcloud_display_settings', $imgUrl );
 }
 function wp2pcloud_ajax_process_request() {
@@ -52,9 +53,9 @@ function wp2pcloud_ajax_process_request() {
 		die();
 		
 	}else if($m == 'check_can_restore') {
-		if(!is_writable(ABSPATH)) {
+		if(!is_writable(dirname(dirname(dirname(dirname(__FILE__))))).'/' ) {
 			$result['status'] = "1";
-			$result['msg'] = __("<p>Path ".ABSPATH." is not writable!</p>");
+			$result['msg'] = __("<p>Path ".dirname(dirname(dirname(dirname(__FILE__)))).'/'." is not writable!</p>");
 		}
 		if(!is_writable(sys_get_temp_dir ())) {
 			$result['status'] = "1";
@@ -72,13 +73,14 @@ function wp2pcloud_perform_backup() {
 	$f->setArchiveName ( 'wp2-pcloud_backup_' . get_bloginfo ( 'name' ) . '_' . get_bloginfo ( "wpurl" ) . '_' . time () . '_' . date ( 'Y-m-d' ) . '.zip' );
 	$f->start ();
 }
-function b2pcloud_display_settings() { 
-	wp_enqueue_script ( 'wpb2pcloud', WP_PLUGIN_URL . '/' . PCLOUD_DIR . '/wpb2pcloud.js' );
-	wp_enqueue_style('wpb2pcloud',WP_PLUGIN_URL . '/' . PCLOUD_DIR . '/wpb2pcloud.css' );
+function b2pcloud_display_settings() {
+	wp_enqueue_script ( 'wpb2pcloud', plugins_url( '/wpb2pcloud.js', __FILE__ ) );
+	wp_enqueue_style('wpb2pcloud',plugins_url( '/wpb2pcloud.css', __FILE__ ));
 	$data = array (
 			'pcloud_auth' => wp2pcloud_getAuth (),
 			'blog_name' => get_bloginfo ( 'name' ),
 			'blog_url' => get_bloginfo ( 'url' ),
+			'archive_icon' => plugins_url('images/zip.png',__FILE__),
 			'PCLOUD_BACKUP_DIR' => PCLOUD_BACKUP_DIR 
 	);
 	wp_localize_script ( 'wpb2pcloud', 'php_data', $data );
@@ -100,7 +102,7 @@ function wp2pcloud_install() {
 function load_scripts() {
 	wp_deregister_script ( 'jquery' );
 	wp_register_script ( 'jquery', 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js' );
-	wp_register_script ( 'wpb2pcloud', WP_PLUGIN_URL . 'wpb2pcloud.js' );
+	wp_register_script ( 'wpb2pcloud', plugins_url( '/wpb2pcloud.js', __FILE__ )  );
 	wp_enqueue_script ( 'jquery' );
 }
 function wp2pcloud_uninstall() {
@@ -152,14 +154,12 @@ function backup_to_pcloud_cron_schedules($schedules) {
 	;
 	return array_merge ( $schedules, $new_schedules );
 }
-
 add_filter ( 'cron_schedules', 'backup_to_pcloud_cron_schedules' );
 register_activation_hook ( __FILE__, 'wp2pcloud_install' );
 register_deactivation_hook ( __FILE__, 'wp2pcloud_uninstall' );
 add_action ( 'admin_menu', 'backup_to_pcloud_admin_menu' );
 add_action ( 'wp_enqueue_scripts', 'load_scripts' );
 add_action ( 'run_pcloud_backup_hook', 'wp2pcloud_perform_backup' );
-
 if (is_admin ()) {
 	add_action ( 'wp_ajax_wp2pclod', 'wp2pcloud_ajax_process_request' );
 }

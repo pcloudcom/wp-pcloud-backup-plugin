@@ -99,7 +99,7 @@ jQuery(function($){
 				html = html + '<table> <tbody> ';
 				$.each(data.metadata.contents,function(k,el){
 					if( el.contenttype != "application/zip" ) { return true; }
-					html = html +'<tr> <td> <a target="blank_" href="https://my.pcloud.com/#folder='+data.metadata.folderid+'&page=filemanager&authtoken='+php_data.pcloud_auth+'"><img src="https://my.pcloud.com/img/icons/20/archive.png" alt="" /> '+el.name+' </a></td> <td><a file_id="'+el.fileid+'" onclick="restore_file('+el.fileid+');return false;" href="#" class="button">Restore</a></td> </tr> ';
+					html = html +'<tr> <td> <a target="blank_" href="https://my.pcloud.com/#folder='+data.metadata.folderid+'&page=filemanager&authtoken='+php_data.pcloud_auth+'"><img src="'+php_data.archive_icon+'" alt="" /> '+el.name+' </a></td> <td><a file_id="'+el.fileid+'" onclick="restore_file('+el.fileid+');return false;" href="#" class="button">Restore</a></td> </tr> ';
 				});
 				html = html + '</tbody> </table>';
 				
