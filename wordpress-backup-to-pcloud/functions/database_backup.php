@@ -11,12 +11,16 @@ class wp2pcloudDatabaseBackup {
 		$this->save_file = 'php://temp';
 		$this->save_file = tempnam(sys_get_temp_dir(), 'sqlarchive');
 		$this->write_file = fopen($this->save_file,'r+');
-		$this->max_data_limit = 10;
+		$this->max_data_limit = 20;
 	}
 
 	public function start(){
-		self::get_tables();
-		return self::start_sql_backup();
+		if(self::test_mysqldump() == true) { 
+			return $this->save_file; 
+		} else {
+			self::get_tables();
+			return self::start_sql_backup();
+		}
 	}
 	
 	private function get_tables(){
@@ -29,17 +33,11 @@ class wp2pcloudDatabaseBackup {
 	
 	private function start_sql_backup() {
 		$blog_time = strtotime(current_time('mysql'));
-// 		$this->write("-- WordPress2Pcloud SQL Dump\n");
-// 		$this->write("-- Version " . BACKUP_TO_PCLOUD_VERSION . "\n");
-// 		$this->write("-- http://pcloud.com\n");
-// 		$this->write("-- Generation Time: " . date("F j, Y", $blog_time) . " at " . date("H:i", $blog_time) . "\n\n");
-		
 		$this->write("/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;\n");
 		$this->write("/*!40101 SET NAMES utf8 */;\n");
 		$this->write("/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;\n");
 		$this->write("/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;\n\n");
 		$this->write('SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";' . "\n\n");
-		
 		foreach ($this->tables as $table) {
 			$res = self::tableStracture($table);
 			$this->write($res);
@@ -50,10 +48,15 @@ class wp2pcloudDatabaseBackup {
 		$this->write("/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */\n\n");
 
 		return $this->save_file;
-		
-// 		rewind($this->write_file);
-// 		$f = stream_get_contents($this->write_file);
-// 		fclose($this->write_file);
+	}
+	
+	private function test_mysqldump(){
+		$cmd = "mysqldump -h".DB_HOST." -u ".DB_USER." --password=".DB_PASSWORD." --skip-comments ".DB_NAME." > ".$this->save_file;
+		exec($cmd,$out);
+		if(file_exists($this->save_file) && filesize($this->save_file) != 0) {
+			return true;
+		}
+		return false;
 	}
 	
 	
@@ -61,11 +64,8 @@ class wp2pcloudDatabaseBackup {
 		$row_count = 0;
 		$broy = $this->db->get_var("SELECT COUNT(*) FROM $table");	// yeah it's bad but ...
 		if ($broy == 0) {
-// 			$this->write("--\n-- Skiping table `$table` because is empty\n--\n\n");
+			
 		} else {
-			if ($offset == 0) {
-// 				$this->write("--\n-- Data for table `$table`\n--\n\n");
-			}
 			for ($i = $offset; $i < $broy; $i = $i + $this->max_data_limit) {
 				$sql = "SELECT * FROM $table LIMIT " . $this->max_data_limit . " OFFSET ".$i;
 				$table_data = $this->db->get_results($sql,ARRAY_A);
