@@ -39,7 +39,7 @@ class wp2pcloudFilesRestore {
 		foreach($q as $k => $v) {
 			$v = trim($v);
 			if($v == "") continue;
-			$wpdb->query($v);
+			$wpdb->query($wpdb->prepare( $v ) );
 		}
 		unlink($sql);
 	}

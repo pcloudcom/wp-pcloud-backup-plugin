@@ -17,7 +17,7 @@ define ( "PCLOUD_DIR", 'wordpress-backup-to-pcloud' );
 define ( 'PCLOUD_BACKUP_DIR', 'WORDPRESS_BACKUPS/'.get_bloginfo("name") );
 
 
-require_once (dirname(dirname(dirname(dirname(__FILE__)))) . '/wp-admin/includes/upgrade.php');
+require_once (ABSPATH.'wp-admin/includes/upgrade.php');
 require_once (plugin_dir_path(__FILE__). '/functions/conf.php');
 require_once (plugin_dir_path(__FILE__). '/functions/database_backup.php');
 require_once (plugin_dir_path(__FILE__). '/functions/files_backup.php');
@@ -100,8 +100,6 @@ function wp2pcloud_install() {
 	dbDelta ( $sql );
 }
 function load_scripts() {
-	wp_deregister_script ( 'jquery' );
-	wp_register_script ( 'jquery', 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js' );
 	wp_register_script ( 'wpb2pcloud', plugins_url( '/wpb2pcloud.js', __FILE__ )  );
 	wp_enqueue_script ( 'jquery' );
 }
